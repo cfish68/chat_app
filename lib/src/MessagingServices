@@ -1,0 +1,36 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class MessagingService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<void> sendMessage({
+    required String senderId,
+    required String recipientId,
+    required String content,
+  }) async {
+    try {
+      // Create a unique message ID
+      String messageId = _firestore.collection('messages').doc().id;
+
+      // Prepare the message data
+      final messageData = {
+        'messageId': messageId,
+        'senderId': senderId,
+        'recipientId': recipientId,
+        'content': content,
+        'timestamp': FieldValue.serverTimestamp(),
+        'participants': [senderId, recipientId], // For querying conversations
+      };
+
+      // Save the message to Firestore
+      await _firestore.collection('messages').doc(messageId).set(messageData);
+
+      print("Message sent successfully!");
+    } catch (e) {
+      print("Error sending message: $e");
+      throw e;
+    }
+  }
+
+  
+}
