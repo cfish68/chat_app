@@ -46,5 +46,5 @@ app.*.map.json
 
 
 # keys
-/src/firebase_options.dart
-/src/cloudinary_options.dart
+/lib/firebase_options.dart
+/lib/cloudinary_options.dart
