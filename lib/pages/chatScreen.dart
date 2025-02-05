@@ -32,21 +32,26 @@ class _chatScreenState extends State<chatScreen> {
             if (messages.isEmpty) {
               return const Center(child: Text("No messages found"));
             }
+            DateTime now = DateTime.now();
+            DateTime today = DateTime(now.year, now.month, now.day, 0, 0, 0);
+            final listMessages = messages.entries.toList();
+            listMessages.sort((b,a) => a.value.timestamp.compareTo(b.value.timestamp));
             return ListView.builder(itemCount: messages.length,
             reverse: false,
             
             itemBuilder: (context, index) {
-              final message = messages[index];
+              final message = listMessages[index];
               return ListTile(
                     onTap: () {
                       Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MessageScreen(key: UniqueKey(), email: message.senderId == FirebaseAuth.instance.currentUser?.email ? message.receiverId : message.senderId)));
+                      MaterialPageRoute(builder: (context) => MessageScreen(email: message.key)));
                       
                     },
                     leading: CircleAvatar(),
-                    title: Text('${message.senderId == FirebaseAuth.instance.currentUser?.email ? message.receiverId : message.senderId}'),
-                    subtitle: Text(message.content),
-                    trailing: Text(message.timestamp.toDate().toIso8601String()),//).message.timestamp.toString().substring(0,19)),
+                    title: Text('${message.key}'),
+                    subtitle: Text(message.value.content.length > 26? '${message.value.content.substring(0, 23)}...': message.value.content),
+
+                    trailing: Text(message.value.timestamp.toDate().isAfter(today)? '${message.value.timestamp.toDate().hour}:${message.value.timestamp.toDate().minute} ': '${message.value.timestamp.toDate().month}/${message.value.timestamp.toDate().day}/${message.value.timestamp.toDate().year}'),//).message.timestamp.toString().substring(0,19)),
                   );
             },
             );

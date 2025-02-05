@@ -16,9 +16,9 @@ class MessageRepository extends ChangeNotifier {
         getLastMessages();
       }
 
-  final StreamController<Message> _messageStreamController =
-      StreamController<Message>.broadcast();
-  Stream<Message> get MessageStream => _messageStreamController.stream;   
+  final StreamController<Map<String,Message>> _messageStreamController =
+      StreamController<Map<String,Message>>.broadcast();
+  Stream<Map<String,Message>> get MessageStream => _messageStreamController.stream;   
 
   // Function to get the last message for each person involved in the conversations
   Future<void> getLastMessages() async {
@@ -38,13 +38,13 @@ class MessageRepository extends ChangeNotifier {
                   .collection('conversations/regular/$converstaionId')
                   .orderBy('timestamp')
                   .limitToLast(1)
-                  .get()
-                  .then((QuerySnapshot) {
-                if (QuerySnapshot.size == 1)
-                  _messageStreamController
-                      .add(Message.fromFirestore(QuerySnapshot.docs.first));
-                //result.add(Message.fromFirestore(QuerySnapshot.docs.first));
-              });
+                  .snapshots().listen((snapshot) {
+                    for(var doc in snapshot.docs) {
+                      final message = Message.fromFirestore(doc);
+                     _messageStreamController.add({((message.senderId != FirebaseAuth.instance.currentUser?.email)? message.senderId : message.receiverId): message});
+                    }
+                  }
+                  );
             }
           }
         },
