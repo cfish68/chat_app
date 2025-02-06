@@ -44,7 +44,7 @@ class _chatScreenState extends State<chatScreen> {
               return ListTile(
                     onTap: () {
                       Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MessageScreen(email: message.key)));
+                      MaterialPageRoute(builder: (context) => MessageScreen(email: message.key, key: UniqueKey())));
                       
                     },
                     leading: CircleAvatar(),

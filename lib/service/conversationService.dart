@@ -14,17 +14,17 @@ class ConversationService extends ChangeNotifier {
   late StreamSubscription<Message> _messageSubscription;
   // Constructor for dependency injection
   ConversationService(this.email) {
-    conversationRepository = ConversationRepository(email);
     init();
     notifyListeners();
   }
   void init() {
     try {
+      conversationRepository = ConversationRepository(email);
       _messageSubscription =
           conversationRepository.MessageStream.listen((message) {
         if (!_messages.contains(message)) {
-          _messages.add(message); // Add new message to the list
-          notifyListeners(); // Notify listeners to rebuild UI
+          _messages.add(message);
+          notifyListeners(); 
         }
       });
     } catch (e) {

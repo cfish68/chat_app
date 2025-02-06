@@ -28,4 +28,9 @@ class MessageService extends ChangeNotifier {
       throw Exception('Failed to initialize MessageService: $e');
     }
   }
+
+  @override
+  void dispose(){
+    super.dispose();
+  }
 }
